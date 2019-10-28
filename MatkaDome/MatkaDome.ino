@@ -381,13 +381,13 @@ void IdleAnimationStep(Animation *const i_Animation, float i_Progress) {
 }
 
 void ServeAnimationStep(Animation *const i_Animation, float i_Progress) {
-    int iLength = strip.numPixels() + BallLedCount - BaseColorLedCount;
-    int start = (iLength * i_Progress) - BallLedCount;
-    int end = start + BallLedCount;
     uint8_t offset = BaseColorLedCount;
+    int iLength = strip.numPixels() + BallLedCount - offset;
+    int start = (iLength * i_Progress) - BallLedCount + offset;
+    int end = start + BallLedCount;
 
     for (uint16_t i = max(0, start); i < min(strip.numPixels(), end); i++) {
-        strip.setPixelColor(offset + i, BallColorsPallete[ball.GetColor()]);
+        strip.setPixelColor(i, BallColorsPallete[ball.GetColor()]);
     }
 
     if (i_Progress == 1) {
@@ -396,13 +396,13 @@ void ServeAnimationStep(Animation *const i_Animation, float i_Progress) {
 }
 
 void BallComingAnimationStep(Animation *const i_Animation, float i_Progress) {
-    int iLength = strip.numPixels() + BallLedCount - BaseColorLedCount;
-    int start = (iLength * i_Progress) - BallLedCount;
-    int end = start + BallLedCount;
     uint8_t offset = BaseColorLedCount;
+    int iLength = strip.numPixels() + BallLedCount - offset;
+    int start = (iLength * i_Progress) - BallLedCount + offset;
+    int end = start + BallLedCount;
 
     for (uint16_t i = max(0, start); i < min(strip.numPixels(), end); i++) {
-        strip.setPixelColor(offset + strip.numPixels() - i, BallColorsPallete[ball.GetColor()]);
+        strip.setPixelColor(strip.numPixels() - i, BallColorsPallete[ball.GetColor()]);
     }
 
     if (i_Progress >= BallComingResponseWindow) {
