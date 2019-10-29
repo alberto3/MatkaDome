@@ -2,16 +2,16 @@
 #define __Config_H__
 
 
-static const bool IsDebugMode = true;
+static const bool IsDebugMode = false;
 static const uint16_t IdleTimeoutSeconds = 30;
-static const uint16_t WaitingTimeoutSeconds = 30;
+static const uint16_t WaitingTimeoutSeconds = 7;
 static const uint16_t IdleAnimationDurationMs = 700;
 static const uint8_t IdleAnimationLedCount = 6;
 static const uint16_t BackgroundAnimationDurationMs = 15000;
 static const float BackgroundBrightness = 0.5f;
 static const uint16_t StripLedCount = 150;
 static const uint8_t StripPin = 3;
-static const uint8_t PiezoPin = A7;
+static const uint8_t PiezoPin = A5;
 static const uint16_t PiezoThreshold = 80;
 static const uint16_t PiezoDebounceTime = 100;
 static const uint8_t RandomServePercent = 10;
@@ -21,8 +21,8 @@ static const uint8_t RadioChannelNumber = 88;
 static const uint8_t RadioMP3Address[10] = "AE2019MP3";
 static const uint8_t RadioNodeAddresses[][10] = {
         "AE2019N1", "AE2019N2", "AE2019N3", "AE2019N4",
-        "AE2019N5", "AE2019N6", "AE2019N7", "AE2019N8",
-        "AE2019N9", "AE2019N10", "AE2019N11", "AE2019N12"
+        "AE2019N5", "AE2019N6", "AE2019N7", "AE2019N8"/*,
+        "AE2019N9", "AE2019N10", "AE2019N11", "AE2019N12"*/
 };
 static const uint32_t StarColor = 0xFFFFFF;
 static const uint32_t StarDurationMs = 100;

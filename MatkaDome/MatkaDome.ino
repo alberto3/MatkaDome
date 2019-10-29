@@ -52,7 +52,7 @@ uint32_t lastPiezoTime = 0;
 
 void setup() {
     if (IsDebugMode) {
-        Serial.begin(115200);
+        Serial.begin(9600);
         while (!Serial);
     }
 
@@ -70,15 +70,15 @@ void setup() {
     }
 
     fsm.add_transition(&Start, &Serving, Serve, DoServe); // Via Piezo
-    fsm.add_timed_transition(&Start, &Serving, IdleTimeoutSeconds * 1000, DoRandomServe); // V
-    fsm.add_transition(&Start, &WaitingForOthers, ServedToOthers, []() {}); // V
+//    fsm.add_timed_transition(&Start, &Serving, IdleTimeoutSeconds * 1000, DoRandomServe); // V
+    fsm.add_transition(&Start, &WaitingForOthers, ServedToOthers, []() { animIdle.Stop(); }); // V
     fsm.add_transition(&Start, &BallComing, ServedToMe, DoBallComing); // V
     fsm.add_transition(&Serving, &WaitingForOthers, BallOut, DoBallOut); // Via animation step
-    fsm.add_transition(&Serving, &Start, ServedToMe, DoBallLost); // V
-    fsm.add_transition(&Serving, &Start, ServedToOthers, DoBallLost); // V
+//    fsm.add_transition(&Serving, &Start, ServedToMe, DoBallLost); // V
+//    fsm.add_transition(&Serving, &Start, ServedToOthers, DoBallLost); // V
     fsm.add_transition(&WaitingForOthers, &Start, BallLost, MakeServerAvailable); // V
     fsm.add_transition(&WaitingForOthers, &BallComing, ServedToMe, DoBallComing); // V
-    fsm.add_timed_transition(&WaitingForOthers, &Start, WaitingTimeoutSeconds * 1000, []() {}); // V
+    fsm.add_timed_transition(&WaitingForOthers, &Start, WaitingTimeoutSeconds * 1000, []() { matka.ClearTargets(); }); // V
     fsm.add_transition(&BallComing, &WaitingForMe, ResponseTime, []() {}); // Via animation step
     fsm.add_transition(&WaitingForMe, &Serving, Serve, DoServe); // Via Piezo
     fsm.add_transition(&WaitingForMe, &Start, BallLost, DoBallLost); // Via animation step
@@ -90,7 +90,7 @@ void setup() {
     radio.setPALevel(RF24_PA_MAX);
     radio.setDataRate(RF24_250KBPS);
     radio.setAutoAck(1); // Ensure autoACK is enabled
-    radio.setRetries(2, 3); // Optionally, increase the delay between retries & # of retries
+    radio.setRetries(5, 2); // Optionally, increase the delay between retries & # of retries
     radio.setCRCLength(RF24_CRC_8); // Use 8-bit CRC for performance
     radio.enableDynamicPayloads();
     radio.openReadingPipe(1, RadioNodeAddresses[nodeID.getID() - 1]);
@@ -135,7 +135,7 @@ void loop() {
 
 void PollPiezo() {
     uint32_t now = millis();
-    if (now - lastPiezoTime >= PiezoDebounceTime && analogRead(PiezoPin) > PiezoThreshold) {
+    if (/*now - lastPiezoTime >= PiezoDebounceTime && */analogRead(PiezoPin) > PiezoThreshold) {
         lastPiezoTime = now;
         fsm.trigger(Event::Serve);
     }
@@ -227,8 +227,10 @@ void BroadcastMessage(Event i_Event) {
             outputStr.concat(F("I:"));
             outputStr.concat(matka.GetNodeId());
             outputStr.concat(F(";"));
+            break;
         case BallOut:
             outputStr = String(F("BallOut;"));
+            break;
         default:
             break;
     }
@@ -261,6 +263,9 @@ void BroadcastMessage(Event i_Event) {
 void DoRandomServe() {
     uint16_t randomNumber = random(0, 100);
     if (randomNumber < RandomServePercent) {
+        if (IsDebugMode) {
+            Serial.println(F("Random serve"));
+        }
         DoServe();
     }
 }

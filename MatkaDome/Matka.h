@@ -58,7 +58,7 @@ public:
         uint8_t numOfPlayers = GetNumOfPlayersInc();
         if (numOfPlayers > 1 && m_Targets < (1u << numOfPlayers)) {
             uint32_t time = millis();
-            while (i_HowMany > 0 & millis() - time < 100) {
+            while (i_HowMany > 0 && millis() - time < 1000) {
                 uint8_t targetID;
 
                 do {
@@ -67,7 +67,7 @@ public:
 
                 uint8_t targetIndex = 1u << targetID;
 
-                if (i_Multiple || (targetIndex & m_Targets) == 0) {
+                if (true/*i_Multiple || (targetIndex & m_Targets) == 0*/) {
 //                    m_Targets |= targetIndex;
                     m_Targets = targetIndex;
                     i_HowMany--;
